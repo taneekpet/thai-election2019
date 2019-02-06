@@ -59,14 +59,18 @@ function District(name) {
     let winnerScore = 0;
     for(let id in this.score) {
       listOfParty[id].districtAppliedList[this.id].won = false;
+    }
+    for(let id in this.score) {
       if(this.score[id] > winnerScore) {
         winnerScore = this.score[id];
-        winner = id;
+        winnerId = id;
       }
     }
     let wonParty = listOfParty[winnerId];
     wonParty.districtAppliedList[this.id].won = true;
-    wonParty.countLocalWon();
+    for(let id in this.score) {
+      listOfParty[id].countLocalWon();
+    }
     this.partyWon = winnerId;
   }
 }
@@ -78,7 +82,7 @@ function triggerCalculate() {
   let sumPartyListNeed = 0;
   let partylistAssignedNum = 0;
 
-  let decimalHandle = [];
+  let decimalHandle = {};
 
   listOfDistrict.forEach((district) => {
     //no vote
@@ -88,6 +92,7 @@ function triggerCalculate() {
     }
     for(let partyId in district.score) {
       sumScore += district.score[partyId];
+      //console.log(district.id,partyId,'--',district.score[partyId])
     }
   });
 
@@ -101,12 +106,9 @@ function triggerCalculate() {
       party.partyListByScore = parseInt(Math.floor(candidateByScore - party.localWonNum));
       sumPartyListNeed += party.partyListByScore;
 
-      decimalHandle.push({
-        party: party,
-        decimal: candidateByScore - party.localWonNum - this.partyListByScore,
-        avgScore: party.sumScore/(candidateByScore - party.localWonNum - this.partyListByScore),
-        random: Date.now()%1000,
-      });
+      let decimal = candidateByScore - party.localWonNum - party.partyListByScore;
+      if(decimalHandle[decimal.toString()] == null) decimalHandle[decimal.toString()] = [];
+      decimalHandle[decimal.toString()].push(party);
     }
   });
 
@@ -117,24 +119,73 @@ function triggerCalculate() {
       );
     });
   }
-  partyToConsider.forEach((party) => {
-    party.partylistWonNum = party.partyListByScore;
-    partylistAssignedNum += party.partyListByScore;
+
+  let toDeleteFromDecimalHandle = [];
+  partyToConsider.forEach((party, index) => {
+    let partylistNewAssigned = parseInt(
+      Math.min(party.partyListByScore, party.partylistAppliedNum)
+    );
+    party.partylistWonNum = partylistNewAssigned;
+    partylistAssignedNum += partylistNewAssigned;
+    if(party.partylistWonNum === party.partylistAppliedNum) {
+      toDeleteFromDecimalHandle.push(party.id);
+    }
   });
 
-  decimalHandle.sort((a,b) => {
-    if(a.decimal !== b.decimal) return a.decimal - b.decimal;
-    if(a.avgScore !== b.avgScore) return a.avgScore - b.avgScore;
-    return a.random - b.random;
-  })
+  for(let key in decimalHandle) {
+    decimalHandle[key].forEach((party, index) => {
+      if(toDeleteFromDecimalHandle.indexOf(party.id) !== -1) {
+        decimalHandle[key].splice(index,1);
+      }
+    });
+    if(decimalHandle[key].length === 0) delete decimalHandle[key];
+  }
+
+  let decimalSort = Object.keys(decimalHandle);
+  decimalSort.sort().reverse();
 
   //handle decimal
   let indexDecimal = 0;
   while(partylistAssignedNum < partylistRepresentativeNum) {
-    decimalHandle[indexDecimal].party.partylistWonNum++;
-    partylistAssignedNum++;
+    //console.log(decimalSort, indexDecimal)
+    let decimalVal = decimalSort[indexDecimal];
+    let listOfPartyToReceive = decimalHandle[decimalVal];
+    //can be assign
+    if(partylistAssignedNum + listOfPartyToReceive.length <= partylistRepresentativeNum) {
+      listOfPartyToReceive.forEach((party, index) => {
+        party.partylistWonNum++;
+        partylistAssignedNum++;
+        if(party.partylistWonNum === party.partylistAppliedNum) {
+          decimalHandle[decimalVal].splice(index,1);
+        }
+      });
+    }
+    else {
+      //handle avg score
+      let tieBreaker = [];
+      listOfPartyToReceive.forEach((party) => {
+        tieBreaker.push({
+          party,
+          avgScoreForOneSeat: party.sumScore/(party.partylistWonNum + party.localWonNum),
+          random: Math.random(),
+        });
+      });
+      tieBreaker.sort((a,b) => {
+        if(a.avgScoreForOneSeat !== b.avgScoreForOneSeat) {
+          return a.avgScoreForOneSeat - b.avgScoreForOneSeat;
+        }
+        return a.random - b.random;
+      });
+      let partyIndex = 0;
+      while(partylistAssignedNum < partylistRepresentativeNum) {
+        tieBreaker[partyIndex].party.partylistWonNum++;
+        partylistAssignedNum++;
+        partyIndex++;
+      }
+      break; //should enter this only once
+    }
     indexDecimal++;
-    indexDecimal %= decimalHandle.length;
+    indexDecimal %= decimalSort.length;
   }
 }
 
@@ -164,7 +215,9 @@ function setScore(party, district, score) {
   party.sumScore -= district.score[party.id];
   //new score
   party.sumScore += score; 
+  //console.log('0000',district.score,district.id,party.id)
   district.score[party.id] = score;
+  //console.log('0000',district.score)
   district.triggerWon();
   triggerCalculate();
 }
@@ -175,7 +228,7 @@ function setScore(party, district, score) {
 
 let tiger = createNewParty('Tiger', partylistRepresentativeNum);
 let lion = createNewParty('Lion', partylistRepresentativeNum);
-let gorilla = createNewParty('Gorilla', partylistRepresentativeNum);
+let gorilla = createNewParty('Gorilla', 0);
 
 //console.log(listOfParty);
 
