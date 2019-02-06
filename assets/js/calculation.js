@@ -3,7 +3,6 @@ alert("JS file loaded...");
 const listOfParty = [];
 const listOfDistrict = [];
 
-const localRepresentativeNum = 350;
 const partylistRepresentativeNum = 150;
 
 const usedPartyName = {};
@@ -73,7 +72,7 @@ function District(name) {
 }
 
 function triggerCalculate() {
-  let numCandidate = localRepresentativeNum + partylistRepresentativeNum;
+  let numCandidate = listOfDistrict.length + partylistRepresentativeNum;
   let sumScore = 0;
   let partyToConsider = [];
   let sumPartyListNeed = 0;
@@ -111,7 +110,7 @@ function triggerCalculate() {
     }
   });
 
-  if(sumPartyListNeed > 150) {
+  if(sumPartyListNeed > partylistRepresentativeNum) {
     partyToConsider.forEach((party) => {
       party.partyListByScore = parseInt(Math.floor(
         party.partyListByScore*partylistRepresentativeNum/sumPartyListNeed)
@@ -131,7 +130,7 @@ function triggerCalculate() {
 
   //handle decimal
   let indexDecimal = 0;
-  while(partylistAssignedNum < 150) {
+  while(partylistAssignedNum < partylistRepresentativeNum) {
     decimalHandle[indexDecimal].party.partylistWonNum++;
     partylistAssignedNum++;
     indexDecimal++;
