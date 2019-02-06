@@ -1,9 +1,9 @@
-alert("JS file loaded...");
+//alert("JS file loaded...");
 
 const listOfParty = [];
 const listOfDistrict = [];
 
-const partylistRepresentativeNum = 150;
+const partylistRepresentativeNum = 3;
 
 const usedPartyName = {};
 const usedDistrictName = {};
@@ -15,7 +15,7 @@ const novote = createNewParty('NO VOTE', 0);
 function Party(name, partylistAppliedNum) {
   if(usedPartyName[name]) throw 'Duplicate party name';
   usedPartyName[name] = true;
-  this.id = listOfParty.length;
+  this.id = listOfParty.length.toString();
   this.name = name;
   this.districtAppliedList = {};
   this.partylistAppliedNum = partylistAppliedNum;
@@ -26,7 +26,7 @@ function Party(name, partylistAppliedNum) {
 
   this.applyForDistrict = function(id) {
     if(this.districtAppliedList[id]) return false; //already applied
-    if(!listOfDistrict[id]) throw 'District not found'
+    if(listOfDistrict[id] == null) throw 'District not found'
     this.districtAppliedList[id] = {
       won: false,
     }
@@ -43,14 +43,14 @@ function Party(name, partylistAppliedNum) {
 function District(name) {
   if(usedDistrictName[name]) throw 'Duplicate district name';
   usedDistrictName[name] = true;
-  this.id = listOfDistrict.length;
+  this.id = listOfDistrict.length.toString();
   this.name = name;
   this.partyWon = null;
   this.score = { 0: 0 };
 
   this.addParty = function(id) {
     if(this.score[id]) return; //already applied
-    if(!listOfParty[id]) throw 'Party not found';
+    if(listOfParty[id] == null) throw 'Party not found';
     this.score[id] = 0;
   }
 
@@ -148,6 +148,7 @@ function createNewParty(name, partylistAppliedNum) {
 
 function createNewDistrict(name) {
   let newDistrict = new District(name);
+  listOfDistrict.push(newDistrict);
   applyPartyAtDistrict(novote, newDistrict);
   return newDistrict;
 }
@@ -158,7 +159,7 @@ function applyPartyAtDistrict(party, district) {
 }
 
 function setScore(party, district, score) {
-  if(!district.score[party.id]) throw 'Party did not apply at this district';
+  if(district.score[party.id] == null) throw 'Party did not apply at this district';
   //old score
   party.sumScore -= district.score[party.id];
   //new score
@@ -167,3 +168,45 @@ function setScore(party, district, score) {
   district.triggerWon();
   triggerCalculate();
 }
+
+//=================================================================================
+
+//each district has 100 score
+
+let tiger = createNewParty('Tiger', partylistRepresentativeNum);
+let lion = createNewParty('Lion', partylistRepresentativeNum);
+let gorilla = createNewParty('Gorilla', partylistRepresentativeNum);
+
+//console.log(listOfParty);
+
+let one = createNewDistrict('one');
+let two = createNewDistrict('two');
+let three = createNewDistrict('three');
+
+//console.log(listOfDistrict);
+
+listOfParty.forEach((party, index) => {
+  if(index === 0) return;
+  listOfDistrict.forEach((district) => {
+    applyPartyAtDistrict(party, district);
+  });
+});
+
+//console.log(listOfParty, listOfDistrict)
+
+setScore(tiger,   one, 98);
+setScore(lion,    one, 1);
+setScore(gorilla, one, 1);
+
+setScore(tiger,   two, 51);
+setScore(lion,    two, 24);
+setScore(gorilla, two, 25);
+
+setScore(tiger,   three, 51);
+setScore(lion,    three, 25);
+setScore(gorilla, three, 24);
+
+console.log(JSON.stringify(listOfParty,null,2), '\n', JSON.stringify(listOfDistrict,null,2))
+/*console.log(tiger.districtAppliedList,    tiger.partylistWonNum);
+console.log(lion.districtAppliedList,     lion.partylistWonNum);
+console.log(gorilla.districtAppliedList,  gorilla.partylistWonNum);*/
