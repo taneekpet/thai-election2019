@@ -112,10 +112,12 @@ function calculateResult() {
 
   for(let id in listOfDistrict) {
     const district = listOfDistrict[id];
-    //no vote
-    if(district.partyWon === 0) {
-      //this district's score is void
-      return false;
+    //no vote won, discard score
+    if(district.partyWon === '0') {
+      for(let partyId in district.score) {
+        listOfParty[partyId].sumScore -= district.score[partyId];
+      }
+      continue;
     }
     for(let partyId in district.score) {
       sumScore += district.score[partyId];
@@ -123,6 +125,10 @@ function calculateResult() {
     }
   }
 
+  if(sumScore === 0) {
+    alert('เลือกตั้งเป็นโมฆะทุกเขต');
+    return;
+  }
   for(let id in listOfParty) {
     const party = listOfParty[id];
     let candidateByScore = (party.sumScore*numCandidate)/sumScore;

@@ -41,10 +41,10 @@ function updateResultUI() {
       let partyObject = listOfParty[(j-1).toString()];
       let highlightElement = districtElement.children[j].children[0];
       if(partyObject.districtAppliedList[districtId].won) {
-        highlightElement.style = "width: 75px; color: darkgreen; font-weight: bolder; border: 8px solid #ced4da";
+        highlightElement.style = "width: 100px; color: darkgreen; font-weight: bolder; border: 8px solid #ced4da";
       }
       else {
-        highlightElement.style = "width: 75px";
+        highlightElement.style = "width: 100px";
       }
     }
   }
@@ -84,7 +84,7 @@ function createNewScoreInput(party, district) {
     setScore(party, district, parseInt(newInput.value));
   });
   newInput.value = 0;
-  newInput.style = "width: 75px";
+  newInput.style = "width: 100px";
   return newInput;
 }
 
