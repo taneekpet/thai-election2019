@@ -232,7 +232,6 @@ function removeParty(partyId) {
     withdrawPartyFromDistrict(party, district, true);
   }
   delete listOfParty[partyId];
-  triggerCalculate();
   return true;
 }
 
@@ -245,7 +244,6 @@ function removeDistrict(districtId) {
     withdrawPartyFromDistrict(party, district, true);
   }
   delete listOfDistrict[districtId];
-  triggerCalculate();
   return true;
 }
 
@@ -254,10 +252,10 @@ function applyPartyAtDistrict(party, district) {
   district.addParty(party.id);
 }
 
-function withdrawPartyFromDistrict(party, district, single) {
+function withdrawPartyFromDistrict(party, district) {
   party.withdrawFromDistrict(district.id);
   district.removeParty(party.id);
-  if(single) triggerCalculate();
+  triggerCalculate(district);
 }
 
 function setScore(party, district, score) {
@@ -269,11 +267,11 @@ function setScore(party, district, score) {
   //console.log('0000',district.score,district.id,party.id)
   district.score[party.id] = score;
   //console.log('0000',district.score)
-  triggerCalculate();
+  triggerCalculate(district);
 }
 
-function triggerCalculate() {
-  district.triggerWon();
+function triggerCalculate(districtChanged) {
+  districtChanged.triggerWon();
   calculateResult();
 }
 
@@ -293,13 +291,13 @@ let three = createNewDistrict('three');
 
 //console.log(listOfDistrict);
 
-listOfParty.forEach((party, index) => {
-  if(index === 0) return;
-  for(let id in listOfDistrict[id]) {
-    const district = listOfDistrict[id]
+for(let partyId in listOfParty) {
+  const party = listOfParty[partyId];
+  for(let districtId in listOfDistrict) {
+    const district = listOfDistrict[districtId]
     applyPartyAtDistrict(party, district);
   }
-});
+}
 
 //console.log(listOfParty, listOfDistrict)
 
