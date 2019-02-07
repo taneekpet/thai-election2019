@@ -8,15 +8,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <!-- main script -->
+    <script src="assets/js/ui.js"></script>
     <script src="assets/js/calculation.js"></script>
   </head>
   <body>
     <div class="partyListNum">
       <!-- textbox for partylist num -->
+      จำนวนสส.บัญชีรายชื่อทั้งหมด: 
+      <input type="number" class="form-control" id="partyListNum" onkeypress="return isInteger(event)"
+        placeholder="การเลืองตั้ง 2562 มีสส.บัญชีรายชื่อ 150 คน"
+      >
+      <button class="btn btn-primary" onclick="return calculateResult();">คำนวณใหม่</button>
     </div>
     <div class="csvInput">
       <!-- fill table input -->
       <!-- explain csv format -->
+    </div>
+    <div class="insertNewElement">
+      <input type="text" class="form-control" id="newPartyName" placeholder="ชื่อพรรคที่จะเพิ่ม">
+      <input type="number" class="form-control" id="newPartyNumPartylist" onkeypress="return isInteger(event)"
+        placeholder="จำนวนสส.บัญชีรายชื่อของพรรคที่จะเพิ่ม"
+      >
+      <button class="btn btn-primary" onclick="return createNewPartyUI();">เพิ่มพรรค</button>
+      <br/>
+      <input type="text" class="form-control" id="newDistrictName" placeholder="ชื่อเขตที่จะเพิ่ม">
+      <button class="btn btn-primary" onclick="return createNewDistrictUI();">เพิ่มเขต</button>
     </div>
     <div class="tableInput">
       <!-- party as column, district as row -->

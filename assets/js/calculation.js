@@ -1,18 +1,28 @@
 //alert("JS file loaded...");
 
-const listOfParty = {};
-const listOfDistrict = {};
-let partyIdAssigned = 0;
-let districtIdAssigned = 0;
+let listOfParty = {}, listOfDistrict = {};
+let partyIdAssigned, districtIdAssigned;
 
-const partylistRepresentativeNum = 3;
+let partylistRepresentativeNum = 3;
 
-const usedPartyName = {};
-const usedDistrictName = {};
+let usedPartyName,usedDistrictName;
 
 const novote = createNewParty('NO VOTE', 0);
 
 //=================================================================================
+
+function calculationReset(inputPartylistRepresentativeNum) {
+  for(let id in listOfDistrict) removeDistrict(id);
+  for(let id in listOfParty) removeParty(id);
+  partyIdAssigned = 0;
+  districtIdAssigned = 0;
+
+  partylistRepresentativeNum = inputPartylistRepresentativeNum;
+
+  usedPartyName = {};
+  usedDistrictName = {};
+  clearInput();
+}
 
 function Party(name, partylistAppliedNum) {
   if(usedPartyName[name]) throw 'Duplicate party name';
@@ -104,7 +114,7 @@ function calculateResult() {
     //no vote
     if(district.partyWon === 0) {
       //this district's score is void
-      return;
+      return false;
     }
     for(let partyId in district.score) {
       sumScore += district.score[partyId];
@@ -204,6 +214,7 @@ function calculateResult() {
     indexDecimal++;
     indexDecimal %= decimalSort.length;
   }
+  return false;
 }
 
 //=================================================================================
