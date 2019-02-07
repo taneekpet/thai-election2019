@@ -12,35 +12,90 @@
     <script src="assets/js/calculation.js"></script>
   </head>
   <body>
-    <div class="partyListNum">
+
+    <div class="partyListNum form-inline" style="width: 90%; margin: 10px 0 0 5%">
       <!-- textbox for partylist num -->
-      จำนวนสส.บัญชีรายชื่อทั้งหมด: 
-      <input type="number" class="form-control" id="partyListNum" onkeypress="return isInteger(event)"
-        placeholder="การเลืองตั้ง 2562 มีสส.บัญชีรายชื่อ 150 คน"
+      <label style="padding-right: 15px">จำนวนสส.บัญชีรายชื่อทั้งหมด:</label>
+      <input type="number" class="form-control" id="partyListNum"
+        style="width: 60%; padding-left: 5px;" 
+        onkeypress="return isInteger(event)"
+        placeholder="การเลือกตั้ง 2562 มีสส.บัญชีรายชื่อ 150 คน"
       >
-      <button class="btn btn-primary" onclick="return calculateResult();">คำนวณใหม่</button>
+      <button class="btn btn-primary" 
+        onclick="return calculateResult();"
+        style="margin-left: 15px;"
+      >
+        คำนวณใหม่
+      </button>
     </div>
+
     <div class="csvInput">
       <!-- fill table input -->
       <!-- explain csv format -->
     </div>
-    <div class="insertNewElement">
-      <input type="text" class="form-control" id="newPartyName" placeholder="ชื่อพรรคที่จะเพิ่ม">
-      <input type="number" class="form-control" id="newPartyNumPartylist" onkeypress="return isInteger(event)"
-        placeholder="จำนวนสส.บัญชีรายชื่อของพรรคที่จะเพิ่ม"
+
+    <div class="insertNewElement form-inline" style="width: 90%; margin: 10px 0 0 5%">
+      <label style="padding-right: 15px">เพิ่มพรรค:</label>
+      <input type="text" class="form-control" id="newPartyName" 
+        style="width: 30%; padding-left: 5px;"
+        placeholder="ชื่อพรรคที่จะเพิ่ม">
+      <label style="padding-right: 15px; margin-left: 15px">จำนวนผู้สมัครสส.บัญชีรายชื่อ: </label>
+      <input type="number" class="form-control" id="newPartyNumPartylist" 
+        style="width: 25%; padding-left: 5px; margin-left: 5px;"
+        onkeypress="return isInteger(event)"
+        placeholder="จำนวนผู้สมัครสส.บัญชีรายชื่อของพรรคที่จะเพิ่ม"
+        value=0
       >
-      <button class="btn btn-primary" onclick="return createNewPartyUI();">เพิ่มพรรค</button>
-      <br/>
-      <input type="text" class="form-control" id="newDistrictName" placeholder="ชื่อเขตที่จะเพิ่ม">
-      <button class="btn btn-primary" onclick="return createNewDistrictUI();">เพิ่มเขต</button>
+      <button class="btn btn-primary" 
+        onclick="return createNewPartyUI();"
+        style="margin-left: 15px;"
+      >
+        เพิ่มพรรค
+      </button>
     </div>
-    <div class="tableInput">
+
+    <div class="insertNewElement form-inline" style="width: 90%; margin: 10px 0 0 5%">
+      <label style="padding-right: 15px">เพิ่มเขตเลือกตั้ง:</label>
+      <input type="text" class="form-control" id="newDistrictName" 
+        style="width: 60%; padding-left: 5px;"
+        placeholder="ชื่อเขตที่จะเพิ่ม">
+      <button class="btn btn-primary" 
+        onclick="return createNewDistrictUI();"
+        style="margin-left: 15px;"
+      >เพิ่มเขต</button>
+    </div>
+
+    <div class="tableInput form-inline" style="width: 98%; margin: 30px 0 0 1%">
       <!-- party as column, district as row -->
       <!-- highlight winner -->
       <!-- last 2 rows count localWon, partylistWon -->
+      <table class="table">
+        <thead>
+          <tr id="partyNameColumn">
+            <th scope="col">คะแนนที่ได้รับ</th>
+            <!--<th scope="col">ไม่ออกเสียง</th>-->
+          </tr>
+        </thead>
+        <tbody id="districtNameRow">
+          <tr id="localWonColumn" style="color: darkred">
+            <th scope="row">จำนวนที่นั่งแบบแบ่งเขต</th>
+            <!--<td>0</td>-->
+          </tr>
+          <tr id="partylistWonColumn" style="color: darkred">
+            <th scope="row">จำนวนที่นั่งแบบบัญชีรายชื่อ</th>
+            <!--<td>0</td>-->
+          </tr>
+          <tr id="sumWonColumn" style="color: red">
+            <th scope="row">จำนวนที่นั่งรวม</th>
+            <!--<td>0</td>-->
+          </tr>
+        </tbody>
+      </table>
     </div>
+
     <div class="sortedResult">
       <!-- list party, sortby name, localWon, partylistWon, sumWon -->
     </div>
+
   </body>
 </html>

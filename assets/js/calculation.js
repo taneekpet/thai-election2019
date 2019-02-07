@@ -1,21 +1,21 @@
 //alert("JS file loaded...");
 
 let listOfParty = {}, listOfDistrict = {};
-let partyIdAssigned, districtIdAssigned;
+let partyIdAssigned = 0, districtIdAssigned = 0;
 
 let partylistRepresentativeNum = 3;
 
-let usedPartyName,usedDistrictName;
+let usedPartyName = {},usedDistrictName = {};
 
-const novote = createNewParty('NO VOTE', 0);
+const novote = createNewParty('ไม่ออกเสียง', 0);
 
 //=================================================================================
 
 function calculationReset(inputPartylistRepresentativeNum) {
   for(let id in listOfDistrict) removeDistrict(id);
   for(let id in listOfParty) removeParty(id);
-  partyIdAssigned = 0;
-  districtIdAssigned = 0;
+  partyIdAssigned = 1;
+  districtIdAssigned = 1;
 
   partylistRepresentativeNum = inputPartylistRepresentativeNum;
 
@@ -173,7 +173,7 @@ function calculateResult() {
 
   //handle decimal
   let indexDecimal = 0;
-  while(partylistAssignedNum < partylistRepresentativeNum) {
+  while(partylistAssignedNum < partylistRepresentativeNum && Object.keys(decimalHandle).length > 0) {
     //console.log(decimalSort, indexDecimal)
     let decimalVal = decimalSort[indexDecimal];
     let listOfPartyToReceive = decimalHandle[decimalVal];
@@ -214,6 +214,10 @@ function calculateResult() {
     indexDecimal++;
     indexDecimal %= decimalSort.length;
   }
+  if(partylistAssignedNum < partylistRepresentativeNum) {
+    alert('ไม่สามารถจัดสรร สส.บัญชีรายชื่อให้ครบได้');
+  }
+  updateResultUI();
   return false;
 }
 
@@ -233,7 +237,7 @@ function createNewDistrict(name) {
 }
 
 function removeParty(partyId) {
-  if(partyId === 0) return false; // can not remove no vote
+  if(partyId === '0') return false; // can not remove no vote
 
   const party = listOfParty[partyId];
   if(party == null) return false; //no party found
@@ -287,7 +291,7 @@ function triggerCalculate(districtChanged) {
 }
 
 //=================================================================================
-
+/*
 //each district has 100 score
 
 let tiger = createNewParty('Tiger', partylistRepresentativeNum);
@@ -325,6 +329,7 @@ setScore(lion,    three, 25);
 setScore(gorilla, three, 24);
 
 console.log(JSON.stringify(listOfParty,null,2), '\n', JSON.stringify(listOfDistrict,null,2))
-/*console.log(tiger.districtAppliedList,    tiger.partylistWonNum);
-console.log(lion.districtAppliedList,     lion.partylistWonNum);
-console.log(gorilla.districtAppliedList,  gorilla.partylistWonNum);*/
+//console.log(tiger.districtAppliedList,    tiger.partylistWonNum);
+//console.log(lion.districtAppliedList,     lion.partylistWonNum);
+//console.log(gorilla.districtAppliedList,  gorilla.partylistWonNum);
+*/
