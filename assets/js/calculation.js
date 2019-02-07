@@ -32,6 +32,12 @@ function Party(name, partylistAppliedNum) {
     }
   }
 
+  this.withdrawFromDistrict = function(id) {
+    if(this.districtAppliedList[id] == null) return false; //already NOT applied
+    if(listOfDistrict[id] == null) throw 'District not found'
+    delete this.districtAppliedList[id];
+  }
+
   this.countLocalWon = function() {
     this.localWonNum = 0;
     for(let districtId in this.districtAppliedList) {
@@ -52,6 +58,13 @@ function District(name) {
     if(this.score[id]) return; //already applied
     if(listOfParty[id] == null) throw 'Party not found';
     this.score[id] = 0;
+  }
+
+  this.removeParty = function(id) {
+    if(this.score[id] == null) return; //already NOT applied
+    if(listOfParty[id] == null) throw 'Party not found';
+    listOfParty[id].sumScore -= this.score[id];
+    delete this.score[id];
   }
 
   this.triggerWon = function() {
@@ -207,6 +220,13 @@ function createNewDistrict(name) {
 function applyPartyAtDistrict(party, district) {
   party.applyForDistrict(district.id);
   district.addParty(party.id);
+}
+
+function withdrawPartyFromDistrict(party, district) {
+  party.withdrawFromDistrict(district.id);
+  district.removeParty(party.id);
+  district.triggerWon();
+  triggerCalculate();
 }
 
 function setScore(party, district, score) {
