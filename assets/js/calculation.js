@@ -1,7 +1,9 @@
 //alert("JS file loaded...");
 
-const listOfParty = [];
-const listOfDistrict = [];
+const listOfParty = {};
+const listOfDistrict = {};
+let partyIdAssigned = 0;
+let districtIdAssigned = 0;
 
 const partylistRepresentativeNum = 3;
 
@@ -15,7 +17,7 @@ const novote = createNewParty('NO VOTE', 0);
 function Party(name, partylistAppliedNum) {
   if(usedPartyName[name]) throw 'Duplicate party name';
   usedPartyName[name] = true;
-  this.id = listOfParty.length.toString();
+  this.id = (partyIdAssigned++).toString();
   this.name = name;
   this.districtAppliedList = {};
   this.partylistAppliedNum = partylistAppliedNum;
@@ -49,7 +51,7 @@ function Party(name, partylistAppliedNum) {
 function District(name) {
   if(usedDistrictName[name]) throw 'Duplicate district name';
   usedDistrictName[name] = true;
-  this.id = listOfDistrict.length.toString();
+  this.id = (districtIdAssigned++).toString();
   this.name = name;
   this.partyWon = null;
   this.score = { 0: 0 };
@@ -88,8 +90,8 @@ function District(name) {
   }
 }
 
-function triggerCalculate() {
-  let numCandidate = listOfDistrict.length + partylistRepresentativeNum;
+function calculateResult() {
+  let numCandidate = Object.keys(listOfDistrict).length + partylistRepresentativeNum;
   let sumScore = 0;
   let partyToConsider = [];
   let sumPartyListNeed = 0;
@@ -97,7 +99,8 @@ function triggerCalculate() {
 
   let decimalHandle = {};
 
-  listOfDistrict.forEach((district) => {
+  for(let id in listOfDistrict) {
+    const district = listOfDistrict[id];
     //no vote
     if(district.partyWon === 0) {
       //this district's score is void
@@ -107,9 +110,10 @@ function triggerCalculate() {
       sumScore += district.score[partyId];
       //console.log(district.id,partyId,'--',district.score[partyId])
     }
-  });
+  }
 
-  listOfParty.forEach((party) => {
+  for(let id in listOfParty) {
+    const party = listOfParty[id];
     let candidateByScore = (party.sumScore*numCandidate)/sumScore;
     if(party.localWonNum >= candidateByScore) {
       party.partyListByScore = 0;
@@ -123,7 +127,7 @@ function triggerCalculate() {
       if(decimalHandle[decimal.toString()] == null) decimalHandle[decimal.toString()] = [];
       decimalHandle[decimal.toString()].push(party);
     }
-  });
+  }
 
   if(sumPartyListNeed > partylistRepresentativeNum) {
     partyToConsider.forEach((party) => {
@@ -206,15 +210,43 @@ function triggerCalculate() {
 
 function createNewParty(name, partylistAppliedNum) {
   let newParty = new Party(name, partylistAppliedNum);
-  listOfParty.push(newParty);
+  listOfParty[newParty.id] = newParty;
   return newParty;
 }
 
 function createNewDistrict(name) {
   let newDistrict = new District(name);
-  listOfDistrict.push(newDistrict);
+  listOfDistrict[newDistrict.id] = newDistrict;
   applyPartyAtDistrict(novote, newDistrict);
   return newDistrict;
+}
+
+function removeParty(partyId) {
+  if(partyId === 0) return false; // can not remove no vote
+
+  const party = listOfParty[partyId];
+  if(party == null) return false; //no party found
+  //all district
+  for(let id in listOfDistrict) {
+    const district = listOfDistrict[id];
+    withdrawPartyFromDistrict(party, district, true);
+  }
+  delete listOfParty[partyId];
+  triggerCalculate();
+  return true;
+}
+
+function removeDistrict(districtId) {
+  const district = listOfDistrict[districtId];
+  if(district == null) return false; //no district found
+  //all party
+  for(let id in listOfParty) {
+    const party = listOfParty[id];
+    withdrawPartyFromDistrict(party, district, true);
+  }
+  delete listOfDistrict[districtId];
+  triggerCalculate();
+  return true;
 }
 
 function applyPartyAtDistrict(party, district) {
@@ -222,11 +254,10 @@ function applyPartyAtDistrict(party, district) {
   district.addParty(party.id);
 }
 
-function withdrawPartyFromDistrict(party, district) {
+function withdrawPartyFromDistrict(party, district, single) {
   party.withdrawFromDistrict(district.id);
   district.removeParty(party.id);
-  district.triggerWon();
-  triggerCalculate();
+  if(single) triggerCalculate();
 }
 
 function setScore(party, district, score) {
@@ -238,8 +269,12 @@ function setScore(party, district, score) {
   //console.log('0000',district.score,district.id,party.id)
   district.score[party.id] = score;
   //console.log('0000',district.score)
-  district.triggerWon();
   triggerCalculate();
+}
+
+function triggerCalculate() {
+  district.triggerWon();
+  calculateResult();
 }
 
 //=================================================================================
@@ -260,9 +295,10 @@ let three = createNewDistrict('three');
 
 listOfParty.forEach((party, index) => {
   if(index === 0) return;
-  listOfDistrict.forEach((district) => {
+  for(let id in listOfDistrict[id]) {
+    const district = listOfDistrict[id]
     applyPartyAtDistrict(party, district);
-  });
+  }
 });
 
 //console.log(listOfParty, listOfDistrict)
