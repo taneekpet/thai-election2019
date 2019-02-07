@@ -34,6 +34,20 @@ function updateResultUI() {
     let id = (i-1).toString();
     sumWonColumn.children[i].innerHTML = listOfParty[id].localWonNum + listOfParty[id].partylistWonNum;
   }
+  for(let i = 0 ; i < districtNameRow.children.length - 3 ; i++) {
+    let districtElement = districtNameRow.children[i];
+    let districtId = districtElement.id;
+    for(let j = 1 ; j < districtElement.children.length ; j++) {
+      let partyObject = listOfParty[(j-1).toString()];
+      let highlightElement = districtElement.children[j].children[0];
+      if(partyObject.districtAppliedList[districtId].won) {
+        highlightElement.style = "width: 75px; color: darkgreen; font-weight: bolder; border: 8px solid #ced4da";
+      }
+      else {
+        highlightElement.style = "width: 75px";
+      }
+    }
+  }
 }
 
 function clearInput() {

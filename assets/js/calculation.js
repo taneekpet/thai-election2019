@@ -101,6 +101,7 @@ function District(name) {
 }
 
 function calculateResult() {
+  partylistRepresentativeNum = parseInt(document.querySelector('input#partyListNum').value);
   let numCandidate = Object.keys(listOfDistrict).length + partylistRepresentativeNum;
   let sumScore = 0;
   let partyToConsider = [];
