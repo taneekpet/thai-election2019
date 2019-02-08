@@ -47,7 +47,7 @@
         style="width: 25%; padding-left: 5px; margin-left: 5px;"
         onkeypress="return isInteger(event)"
         placeholder="จำนวนผู้สมัครสส.บัญชีรายชื่อของพรรคที่จะเพิ่ม"
-        value=0
+        value=150
       >
       <button class="btn btn-primary" 
         onclick="return createNewPartyUI();"
@@ -98,6 +98,22 @@
 
     <div class="sortedResult">
       <!-- list party, sortby name, localWon, partylistWon, sumWon -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">สรุปผลการเลือกตั้ง</th>
+            <th scope="col" onclick="updateSortType('local')">จำนวนที่นั่งแบบแบ่งเขต (คลิกเพื่อเรียง)</th>
+            <th scope="col" onclick="updateSortType('partylist')">จำนวนที่นั่งแบบบัญชีรายชื่อ (คลิกเพื่อเรียง)</th>
+            <th scope="col" onclick="updateSortType('sum')">จำนวนที่นั่งรวม (คลิกเพื่อเรียง)</th>
+          </tr>
+        </thead>
+        <tbody id="resultRow">
+          <!--<tr id="localWonColumn">
+            <th scope="row">จำนวนที่นั่งแบบแบ่งเขต</th>
+            <td>0</td>
+          </tr>-->
+        </tbody>
+      </table>
     </div>
 
   </body>

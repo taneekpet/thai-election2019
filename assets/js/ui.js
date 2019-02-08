@@ -2,7 +2,8 @@ const tmpOnload = window.onload;
 const defaultInputPartylistRepresentativeNum = 150;
 
 let partyNameColumn, districtNameRow,
-    localWonColumn, partylistWonColumn, sumWonColumn;
+    localWonColumn, partylistWonColumn, sumWonColumn, 
+    sortedResultDiv, sortedResultRow, sortType;
 
 window.onload = function() {
   if(tmpOnload) tmpOnload();
@@ -11,7 +12,22 @@ window.onload = function() {
   localWonColumn = document.querySelector('tbody tr#localWonColumn');
   partylistWonColumn = document.querySelector('tbody tr#partylistWonColumn');
   sumWonColumn = document.querySelector('tbody tr#sumWonColumn');
+  sortedResultDiv = document.querySelector('div#sortedResult');
+  sortedResultRow = document.querySelector('tbody#resultRow');
   calculationReset(defaultInputPartylistRepresentativeNum);
+  sortType = ['sum',0];
+}
+
+function updateSortType(newSortType) {
+  if(newSortType === sortType[0]) {
+    sortType[1]++;
+    sortType[1] %= 2;
+  }
+  else {
+    sortType[0] = newSortType;
+    sortType[1] = 0;
+  }
+  updateSortedResultUI();
 }
 
 function isInteger(evt) {
@@ -30,6 +46,62 @@ function electionVoidUI() {
   for(let i = 1 ; i < sumWonColumn.children.length ; i++) {
     sumWonColumn.children[i].innerHTML = '-';
   }
+  sortedResultDiv.style = 'display: none;';
+}
+
+function sortParty() {
+  let sortedList = [];
+  let [ type, desc ] = sortType;
+  for(let key in listOfParty) {
+    sortedList.push(listOfParty[key]);
+  }
+  sortedList.sort((a,b) => {
+    switch(type) {
+      case 'sum':
+        return (a.localWonNum + a.partylistWonNum) - (b.localWonNum + b.partylistWonNum);
+      case 'local':
+        return a.localWonNum - b.localWonNum;
+      case 'partylist':
+        return a.partylistWonNum - b.partylistWonNum;
+    }
+  });
+  if(desc === 0) sortedList.reverse();
+  return sortedList;
+}
+
+function updateSortedResultUI() {
+  //clear
+  for(let i = 0 ; i < sortedResultRow.children.length ; i++) {
+    sortedResultRow.removeChild(sortedResultRow.children[i]);
+  }
+
+  let sortedPartiesResult = sortParty();
+  sortedPartiesResult.forEach((party) => {
+    let tr = document.createElement('tr');
+    let th = document.createElement('th');
+    th.scope = 'row';
+    th.innerHTML = party.name;
+    if(party.id !== '0') th.innerHTML = 'พรรค ' + th.innerHTML;
+    tr.appendChild(th);
+
+    let localTd = document.createElement('td'); 
+    let partylistTd = document.createElement('td'); 
+    let sumTd = document.createElement('td'); 
+
+    localTd.innerHTML = party.localWonNum.toString();
+    partylistTd.innerHTML = party.partylistWonNum.toString();
+    sumTd.innerHTML = (party.localWonNum + party.partylistWonNum).toString();
+
+    if(party.id !== '0') {
+      partylistTd.innerHTML = '-';
+      sumTd.innerHTML = localTd.innerHTML;
+    }
+    sortedResultRow.appendChild(tr);
+    sortedResultRow.appendChild(localTd);
+    sortedResultRow.appendChild(partylistTd);
+    sortedResultRow.appendChild(sumTd);
+  });
+  sortedResultDiv.style = '';
 }
 
 function updateResultUI() {
@@ -59,6 +131,8 @@ function updateResultUI() {
       }
     }
   }
+
+  updateSortedResultUI();
 }
 
 function clearInput() {
