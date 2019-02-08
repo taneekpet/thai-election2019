@@ -32,11 +32,6 @@
       </button>
     </div>
 
-    <div class="csvInput">
-      <!-- fill table input -->
-      <!-- explain csv format -->
-    </div>
-
     <div class="insertNewElement form-inline" style="width: 90%; margin: 10px 0 0 5%">
       <label style="padding-right: 15px">เพิ่มพรรค:</label>
       <input type="text" class="form-control" id="newPartyName" 
@@ -66,6 +61,25 @@
         onclick="return createNewDistrictUI();"
         style="margin-left: 15px;"
       >เพิ่มเขต</button>
+    </div>
+
+    <div class="csvInput" style="width: 90%; margin: 30px 30px 0 5%">
+      <!-- fill table input -->
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">หรือนำเข้าข้อมูลคะแนนจาก csv file ที่นี่:</span>
+        </div>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="csvScoreFile">
+          <label class="custom-file-label" for="csvScoreFile">นำเข้าไฟล์</label>
+        </div>
+      </div>
+      <!-- explain csv format -->
+      <br/>
+      # , (ชื่อพรรคที่ 1):(จำนวนสส.บัญชีรายชื่อ) , (ชื่อพรรคที่ 2):(จำนวนสส.บัญชีรายชื่อ) , ...<br/>
+      (ชื่อเขตที่ 1), (คะแนนพรรคที่ 1 ในเขตที่ 1), (คะแนนพรรคที่ 2 ในเขตที่ 1), ...<br/>
+      <br/>
+      <a href="assets/example.csv">ตัวอย่างไฟล์ csv ที่รองรับ</a>
     </div>
 
     <div class="tableInput form-inline" style="width: 98%; margin: 30px 0 0 1%">

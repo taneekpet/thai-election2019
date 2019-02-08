@@ -3,7 +3,8 @@ const defaultInputPartylistRepresentativeNum = 150;
 
 let partyNameColumn, districtNameRow,
     localWonColumn, partylistWonColumn, sumWonColumn, 
-    sortedResultDiv, sortedResultRow, sortType;
+    sortedResultDiv, sortedResultRow, sortType,
+    csvScoreFile;
 
 window.onload = function() {
   if(tmpOnload) tmpOnload();
@@ -14,8 +15,22 @@ window.onload = function() {
   sumWonColumn = document.querySelector('tbody tr#sumWonColumn');
   sortedResultDiv = document.querySelector('div#sortedResult');
   sortedResultRow = document.querySelector('tbody#resultRow');
+  csvScoreFile = document.querySelector('input#csvScoreFile');
   calculationReset(defaultInputPartylistRepresentativeNum);
   sortType = ['sum',0];
+  csvScoreFile.addEventListener('change', handleCSV);
+}
+
+function handleCSV(evt) {
+  var files = evt.target.files;
+  var file = files[0];           
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    inputTxt = event.target.result;
+    calculationReset(defaultInputPartylistRepresentativeNum);
+    fillInputFromCSV(inputTxt);
+  }
+  reader.readAsText(file)
 }
 
 function updateSortType(newSortType) {
@@ -102,7 +117,7 @@ function updateSortedResultUI() {
     tr.appendChild(sumTd);
     sortedResultRow.appendChild(tr);
   });
-  sortedResultDiv.style = '';
+  sortedResultDiv.style = 'width: 98%; margin: 30px 0 0 1%';
 }
 
 function updateResultUI() {
@@ -171,13 +186,14 @@ function createNewScoreInput(party, district) {
   });
   newInput.value = 0;
   newInput.style = "width: 100px";
+  newInput.id = 'partyId_' + party.id + '_districtId_' + district.id;
   return newInput;
 }
 
-function createNewPartyUI(name, partyId = '0') {
+function createNewPartyUI(name, partyId = '0', applied = false) {
   if(name !== novote.name) {
-    name = document.querySelector('input#newPartyName').value;
-    let applied = document.querySelector('input#newPartyNumPartylist').value;
+    name = name || document.querySelector('input#newPartyName').value;
+    applied = applied || document.querySelector('input#newPartyNumPartylist').value;
     if(applied === '') {
       alert('ใส่จำนวนผู้สมัครสส.บัญชีรายชื่อให้พรรคที่จะเพิ่ม');
       return;
@@ -205,8 +221,8 @@ function createNewPartyUI(name, partyId = '0') {
   return false;
 }
 
-function createNewDistrictUI() {
-  let name = document.querySelector('input#newDistrictName').value;
+function createNewDistrictUI(name = false) {
+  name = name || document.querySelector('input#newDistrictName').value;
   let districtId = createNewDistrict(name).id;
   //create UI
   let newDistrictUI = document.createElement('tr');

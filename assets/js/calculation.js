@@ -11,6 +11,41 @@ const novote = createNewParty('ไม่ออกเสียง', 0);
 
 //=================================================================================
 
+function fillInputFromCSV(inputTxt) {
+  try {
+    let lines = inputTxt.split('\n');
+    for(let i = 0 ; i < lines.length ; i++) {
+      let words = lines[i].split(',');
+      for(let j = 0 ; j < words.length ; j++) {
+        //create party
+        if(i === 0) {
+          if(j === 0) continue; // # symbol
+          let [ partyName, partylistApplied ] = words[j].split(':');
+          createNewPartyUI(partyName, null, partylistApplied);
+        }
+        //create district
+        else if(j === 0) {
+          createNewDistrictUI(words[j]);
+        }
+        else {
+          let district = listOfDistrict[i.toString()];
+          let party = listOfParty[j.toString()];
+          //change ui score
+          let inputElem = document.querySelector('input#partyId_' + party.id + '_districtId_' + district.id);
+          inputElem.value = words[j];
+          inputElem.dispatchEvent(new Event('change'));
+        }
+      }
+    }
+  } catch(error) {
+    alert('ไฟล์ไม่รองรับ');
+    console.log(error);
+    calculationReset(document.querySelector('input#partyListNum').value);
+  }
+}
+
+//=================================================================================
+
 function calculationReset(inputPartylistRepresentativeNum) {
   for(let id in listOfDistrict) removeDistrict(id);
   for(let id in listOfParty) removeParty(id);
@@ -182,6 +217,7 @@ function calculateResult() {
   //handle decimal
   let indexDecimal = 0;
   while(partylistAssignedNum < partylistRepresentativeNum && Object.keys(decimalHandle).length > 0) {
+    //console.log(decimalHandle);
     //console.log(decimalSort, indexDecimal)
     let decimalVal = decimalSort[indexDecimal];
     let listOfPartyToReceive = decimalHandle[decimalVal];
