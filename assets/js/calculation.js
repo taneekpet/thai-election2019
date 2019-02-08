@@ -136,7 +136,7 @@ function District(name) {
 }
 
 function calculateResult() {
-  console.log('==============');
+  //console.log('==============');
   partylistRepresentativeNum = parseInt(document.querySelector('input#partyListNum').value);
   let numCandidate = Object.keys(listOfDistrict).length + partylistRepresentativeNum;
   let sumScore = 0;
