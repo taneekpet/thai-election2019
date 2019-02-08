@@ -173,24 +173,22 @@ function calculateResult() {
     let candidateByScore = (party.sumScore*numCandidate)/sumScore;
     if(party.localWonNum >= candidateByScore) {
       party.partyListByScore = 0;
-      party.partylistWonNum = 0;
     } else {
-      partyToConsider.push(party);
-      //party.partyListByScore = parseInt(Math.floor(candidateByScore - party.localWonNum));
       party.partyListByScore = candidateByScore - party.localWonNum;
       sumPartyListNeed += party.partyListByScore;
-
-      let decimal = candidateByScore - party.localWonNum - parseInt(Math.floor(candidateByScore - party.localWonNum));
+      partyToConsider.push(party);
+    }
+    if(party.partylistAppliedNum > 0) {
+      let decimal = candidateByScore - party.localWonNum - parseInt(candidateByScore - party.localWonNum);
       if(decimalHandle[decimal.toString()] == null) decimalHandle[decimal.toString()] = [];
       decimalHandle[decimal.toString()].push(party);
     }
-    //console.log(JSON.stringify(party,null,2));
   }
 
   if(sumPartyListNeed > partylistRepresentativeNum) {
     partyToConsider.forEach((party) => {
-      party.partyListByScore = parseInt(Math.floor(
-        party.partyListByScore*partylistRepresentativeNum/sumPartyListNeed)
+      party.partyListByScore = parseInt(
+        party.partyListByScore*partylistRepresentativeNum/sumPartyListNeed
       );
     });
   }
@@ -207,14 +205,17 @@ function calculateResult() {
     }
   });
 
-  console.log(JSON.stringify(listOfParty,null,2));
+  //console.log('before handle',JSON.stringify(listOfParty,null,2));
+  //console.log(toDeleteFromDecimalHandle, decimalHandle);
 
   for(let key in decimalHandle) {
-    decimalHandle[key].forEach((party, index) => {
-      if(toDeleteFromDecimalHandle.indexOf(party.id) !== -1) {
-        decimalHandle[key].splice(index,1);
+    for(let i = 0 ; i < decimalHandle[key].length ; i++) {
+      const partyId = decimalHandle[key][i].id;
+      if(toDeleteFromDecimalHandle.indexOf(partyId) !== -1) {
+        decimalHandle[key].splice(i,1);
+        i--;
       }
-    });
+    }
     if(decimalHandle[key].length === 0) delete decimalHandle[key];
   }
 
@@ -268,6 +269,7 @@ function calculateResult() {
   if(partylistAssignedNum < partylistRepresentativeNum) {
     alert('ไม่สามารถจัดสรร สส.บัญชีรายชื่อให้ครบได้');
   }
+  //console.log('after handle',JSON.stringify(listOfParty,null,2));
   updateResultUI();
   return false;
 }
