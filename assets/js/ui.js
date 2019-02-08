@@ -20,10 +20,21 @@ function isInteger(evt) {
   return charCode >= 48 && charCode <= 57
 }
 
+function electionVoidUI() {
+  for(let i = 1 ; i < localWonColumn.children.length ; i++) {
+    localWonColumn.children[i].innerHTML = '-';
+  }
+  for(let i = 1 ; i < partylistWonColumn.children.length ; i++) {
+    partylistWonColumn.children[i].innerHTML = '-';
+  }
+  for(let i = 1 ; i < sumWonColumn.children.length ; i++) {
+    sumWonColumn.children[i].innerHTML = '-';
+  }
+}
+
 function updateResultUI() {
   for(let i = 1 ; i < localWonColumn.children.length ; i++) {
     let id = (i-1).toString();
-    console.log(id, listOfParty)
     localWonColumn.children[i].innerHTML = listOfParty[id].localWonNum;
   }
   for(let i = 1 ; i < partylistWonColumn.children.length ; i++) {

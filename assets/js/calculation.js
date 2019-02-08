@@ -127,6 +127,7 @@ function calculateResult() {
 
   if(sumScore === 0) {
     alert('เลือกตั้งเป็นโมฆะทุกเขต');
+    electionVoidUI();
     return;
   }
   for(let id in listOfParty) {
