@@ -136,6 +136,7 @@ function District(name) {
 }
 
 function calculateResult() {
+  console.log('==============');
   partylistRepresentativeNum = parseInt(document.querySelector('input#partyListNum').value);
   let numCandidate = Object.keys(listOfDistrict).length + partylistRepresentativeNum;
   let sumScore = 0;
@@ -167,19 +168,23 @@ function calculateResult() {
   }
   for(let id in listOfParty) {
     const party = listOfParty[id];
+    //reset
+    party.partylistWonNum = 0;
     let candidateByScore = (party.sumScore*numCandidate)/sumScore;
     if(party.localWonNum >= candidateByScore) {
       party.partyListByScore = 0;
       party.partylistWonNum = 0;
     } else {
       partyToConsider.push(party);
-      party.partyListByScore = parseInt(Math.floor(candidateByScore - party.localWonNum));
+      //party.partyListByScore = parseInt(Math.floor(candidateByScore - party.localWonNum));
+      party.partyListByScore = candidateByScore - party.localWonNum;
       sumPartyListNeed += party.partyListByScore;
 
-      let decimal = candidateByScore - party.localWonNum - party.partyListByScore;
+      let decimal = candidateByScore - party.localWonNum - parseInt(Math.floor(candidateByScore - party.localWonNum));
       if(decimalHandle[decimal.toString()] == null) decimalHandle[decimal.toString()] = [];
       decimalHandle[decimal.toString()].push(party);
     }
+    //console.log(JSON.stringify(party,null,2));
   }
 
   if(sumPartyListNeed > partylistRepresentativeNum) {
@@ -201,6 +206,8 @@ function calculateResult() {
       toDeleteFromDecimalHandle.push(party.id);
     }
   });
+
+  console.log(JSON.stringify(listOfParty,null,2));
 
   for(let key in decimalHandle) {
     decimalHandle[key].forEach((party, index) => {
