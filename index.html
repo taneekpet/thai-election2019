@@ -96,15 +96,15 @@
       </table>
     </div>
 
-    <div class="sortedResult">
+    <div class="form-inline" id="sortedResult" style="width: 98%; margin: 30px 0 0 1%">
       <!-- list party, sortby name, localWon, partylistWon, sumWon -->
       <table class="table">
         <thead>
           <tr>
             <th scope="col">สรุปผลการเลือกตั้ง</th>
-            <th scope="col" onclick="updateSortType('local')">จำนวนที่นั่งแบบแบ่งเขต (คลิกเพื่อเรียง)</th>
-            <th scope="col" onclick="updateSortType('partylist')">จำนวนที่นั่งแบบบัญชีรายชื่อ (คลิกเพื่อเรียง)</th>
-            <th scope="col" onclick="updateSortType('sum')">จำนวนที่นั่งรวม (คลิกเพื่อเรียง)</th>
+            <th scope="col" onclick="updateSortType('local')" style="cursor: pointer">จำนวนที่นั่งแบบแบ่งเขต (คลิกเพื่อเรียง)</th>
+            <th scope="col" onclick="updateSortType('partylist')" style="cursor: pointer">จำนวนที่นั่งแบบบัญชีรายชื่อ (คลิกเพื่อเรียง)</th>
+            <th scope="col" onclick="updateSortType('sum')" style="cursor: pointer">จำนวนที่นั่งรวม (คลิกเพื่อเรียง)</th>
           </tr>
         </thead>
         <tbody id="resultRow">

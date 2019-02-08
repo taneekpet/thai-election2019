@@ -71,8 +71,9 @@ function sortParty() {
 
 function updateSortedResultUI() {
   //clear
-  for(let i = 0 ; i < sortedResultRow.children.length ; i++) {
-    sortedResultRow.removeChild(sortedResultRow.children[i]);
+  const length = sortedResultRow.children.length;
+  for(let i = 0 ; i < length ; i++) {
+    sortedResultRow.removeChild(sortedResultRow.children[0]);
   }
 
   let sortedPartiesResult = sortParty();
@@ -92,14 +93,14 @@ function updateSortedResultUI() {
     partylistTd.innerHTML = party.partylistWonNum.toString();
     sumTd.innerHTML = (party.localWonNum + party.partylistWonNum).toString();
 
-    if(party.id !== '0') {
+    if(party.id === '0') {
       partylistTd.innerHTML = '-';
       sumTd.innerHTML = localTd.innerHTML;
     }
+    tr.appendChild(localTd);
+    tr.appendChild(partylistTd);
+    tr.appendChild(sumTd);
     sortedResultRow.appendChild(tr);
-    sortedResultRow.appendChild(localTd);
-    sortedResultRow.appendChild(partylistTd);
-    sortedResultRow.appendChild(sumTd);
   });
   sortedResultDiv.style = '';
 }
