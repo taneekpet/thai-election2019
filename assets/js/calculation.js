@@ -11,6 +11,46 @@ const novote = createNewParty('ไม่ออกเสียง', 0);
 
 //=================================================================================
 
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+function exportCSV() {
+  let textScore = '#';
+  let partyIdList = Object.keys(listOfParty);
+  let districtIdList = Object.keys(listOfDistrict);
+  for(let i = 0 ; i < partyIdList.length ; i++) {
+    if(partyIdList[i] === '0') {
+      partyIdList.splice(i,1);
+      break;
+    }
+  }
+  for(let i = 0 ; i < partyIdList.length ; i++) {
+    const party = listOfParty[partyIdList[i]];
+    textScore += ',';
+    textScore += party.name + ':' + party.partylistAppliedNum.toString();
+  }
+  for(let i = 0 ; i < districtIdList.length ; i++) {
+    const district = listOfDistrict[districtIdList[i]];
+    textScore += '\n' + district.name;
+    for(let j = 0 ; j < partyIdList.length ; j++) {
+      textScore += ',' + (district.score[partyIdList[j]] 
+        ? district.score[partyIdList[j]].toString() 
+        : '0');
+    }
+  }
+  download('exportScore.csv', textScore);
+}
+
 function fillInputFromCSV(inputTxt) {
   try {
     let lines = inputTxt.split('\n');
